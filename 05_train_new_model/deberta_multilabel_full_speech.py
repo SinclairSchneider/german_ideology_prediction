@@ -10,7 +10,8 @@ import pandas as pd
 #ds = load_dataset("SinclairSchneider/Bundestagsreden_senti_pos_neg")
 #df = ds['train'].to_pandas()
 #df = df.query("Redner_Partei_oder_Rolle in ('CDU/CSU', 'SPD', 'AfD', 'FDP', 'BÜNDNIS 90/DIE GRÜNEN', 'DIE LINKE')")
-df = pd.read_json("trainset_combined.json")
+ds = load_dataset("SinclairSchneider/trainset_political_party_big")
+df = ds['train'].to_pandas()
 
 labels = ["AfD", "BÜNDNIS 90/DIE GRÜNEN", "CDU/CSU", "DIE LINKE", "FDP", "SPD"]
 id2label = {idx:label for idx, label in enumerate(labels)}
