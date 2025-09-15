@@ -1,0 +1,18 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: german_ideology_prediction
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Sinclair
+    family-names: Schneider
+    email: SinclairSchneider@gmail.com
+    affiliation: Universität der Bundeswehr München
+    orcid: 'https://orcid.org/0000-0002-6332-7014'
+repository-code: >-
+  https://github.com/SinclairSchneider/german_ideology_prediction
+license: MIT
