@@ -1,4 +1,4 @@
-from transformers import AutoConfig, LlamaForSequenceClassification, LlamaTokenizer, EvalPrediction, TrainingArguments, Trainer, AutoTokenizer, Gemma2ForSequenceClassification#, AutoModelForSequenceClassification
+from transformers import AutoConfig, AutoModelForSequenceClassification, AutoTokenizer, EvalPrediction, TrainingArguments, Trainer
 from datasets import load_dataset
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, roc_auc_score
@@ -13,10 +13,7 @@ import wandb
 #os.environ["TOKENIZERS_PARALLELISM"] = "false"
 #run_name = "politic_EuroBERT-210m_multilabel_bundestag_and_wahlomat"
 #run_name = "politic_EuroBERT-610m_multilabel_bundestag_and_wahlomat"
-#run_name = "politic_EuroBERT-2.1B_multilabel_bundestag_and_wahlomat"
-#run_name = "politic_Llama-3.2-1B_multilabel_bundestag_and_wahlomat"
-#run_name = "politic_Qwen2.5-1.5B_multilabel_bundestag_and_wahlomat"
-run_name = "politic_gemma-3-1b_multilabel_bundestag_and_wahlomat"
+run_name = "politic_EuroBERT-2.1B_multilabel_bundestag_and_wahlomat"
 per_device_train_batch_size = 2
 
 # 1) Load dataset
@@ -29,16 +26,11 @@ id2label = {idx: label for idx, label in enumerate(labels)}
 label2id = {label: idx for idx, label in enumerate(labels)}
 
 # 3) Load model and tokenizer
-#model_name = "EuroBERT/EuroBERT-2.1B"
+model_name = "EuroBERT/EuroBERT-2.1B"
 #model_name = "EuroBERT/EuroBERT-610m"
 #model_name = "EuroBERT/EuroBERT-210m"
-#model_name = "meta-llama/Llama-3.2-1B"
-#model_name = "Qwen/Qwen2.5-1.5B"
-#model_name = "google/gemma-2-2b"
-model_name = "google/gemma-3-1b-pt"
 max_length = 8192
-#model = AutoModelForSequenceClassification.from_pretrained(
-model = Gemma2ForSequenceClassification.from_pretrained(
+model = AutoModelForSequenceClassification.from_pretrained(
     model_name,
     num_labels=len(labels),
     output_attentions=False,
@@ -54,17 +46,8 @@ tokenizer = AutoTokenizer.from_pretrained(
     do_lower_case=False,
     max_length=max_length,
     TOKENIZERS_PARALLELISM=True,
-    trust_remote_code=True,
-    add_prefix_space=True
+    trust_remote_code=True
 )
-#tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-#tokenizer.pad_token = "[PAD]"
-#tokenizer.padding_side = "left"
-tokenizer.pad_token_id = tokenizer.eos_token_id
-
-model.config.pad_token_id = tokenizer.pad_token_id
-model.config.use_cache = False
-model.config.pretraining_tp = 1
 
 # 4) Preprocess label columns for multi-label
 df["senti_AfD"] = df["senti_AfD"].apply(lambda n: 1 if n == 1 else 0)
@@ -147,7 +130,7 @@ def compute_metrics(pred: EvalPrediction, threshold=0.5):
         'roc_auc': roc_auc
     }
 
-wandb.init(project="politic_alternative_models", entity="unibw", name=run_name) #auskommentiert wegen fehlendem Internt
+wandb.init(project="politic_EuroBERT", entity="unibw", name=run_name) #auskommentiert wegen fehlendem Internt
 metric_name = "f1"
 
 # 8) Training arguments

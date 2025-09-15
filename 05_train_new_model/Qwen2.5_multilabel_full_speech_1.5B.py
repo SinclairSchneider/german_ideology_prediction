@@ -1,4 +1,4 @@
-from transformers import AutoConfig, LlamaForSequenceClassification, LlamaTokenizer, EvalPrediction, TrainingArguments, Trainer, AutoTokenizer, Gemma2ForSequenceClassification#, AutoModelForSequenceClassification
+from transformers import AutoConfig, LlamaForSequenceClassification, LlamaTokenizer, EvalPrediction, TrainingArguments, Trainer, AutoTokenizer, AutoModelForSequenceClassification
 from datasets import load_dataset
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, roc_auc_score
@@ -15,8 +15,7 @@ import wandb
 #run_name = "politic_EuroBERT-610m_multilabel_bundestag_and_wahlomat"
 #run_name = "politic_EuroBERT-2.1B_multilabel_bundestag_and_wahlomat"
 #run_name = "politic_Llama-3.2-1B_multilabel_bundestag_and_wahlomat"
-#run_name = "politic_Qwen2.5-1.5B_multilabel_bundestag_and_wahlomat"
-run_name = "politic_gemma-3-1b_multilabel_bundestag_and_wahlomat"
+run_name = "politic_Qwen2.5-1.5B_multilabel_bundestag_and_wahlomat"
 per_device_train_batch_size = 2
 
 # 1) Load dataset
@@ -33,12 +32,9 @@ label2id = {label: idx for idx, label in enumerate(labels)}
 #model_name = "EuroBERT/EuroBERT-610m"
 #model_name = "EuroBERT/EuroBERT-210m"
 #model_name = "meta-llama/Llama-3.2-1B"
-#model_name = "Qwen/Qwen2.5-1.5B"
-#model_name = "google/gemma-2-2b"
-model_name = "google/gemma-3-1b-pt"
+model_name = "Qwen/Qwen2.5-1.5B"
 max_length = 8192
-#model = AutoModelForSequenceClassification.from_pretrained(
-model = Gemma2ForSequenceClassification.from_pretrained(
+model = AutoModelForSequenceClassification.from_pretrained(
     model_name,
     num_labels=len(labels),
     output_attentions=False,

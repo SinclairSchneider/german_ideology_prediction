@@ -1,4 +1,4 @@
-from transformers import AutoConfig, LlamaForSequenceClassification, LlamaTokenizer, EvalPrediction, TrainingArguments, Trainer, AutoTokenizer, Gemma2ForSequenceClassification#, AutoModelForSequenceClassification
+from transformers import AutoConfig, LlamaForSequenceClassification, LlamaTokenizer, EvalPrediction, TrainingArguments, Trainer, AutoTokenizer, Gemma3ForSequenceClassification#, AutoModelForSequenceClassification
 from datasets import load_dataset
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, roc_auc_score
@@ -16,7 +16,7 @@ import wandb
 #run_name = "politic_EuroBERT-2.1B_multilabel_bundestag_and_wahlomat"
 #run_name = "politic_Llama-3.2-1B_multilabel_bundestag_and_wahlomat"
 #run_name = "politic_Qwen2.5-1.5B_multilabel_bundestag_and_wahlomat"
-run_name = "politic_gemma-3-1b_multilabel_bundestag_and_wahlomat"
+run_name = "politic_gemma-3-4b_multilabel_bundestag_and_wahlomat"
 per_device_train_batch_size = 2
 
 # 1) Load dataset
@@ -35,10 +35,10 @@ label2id = {label: idx for idx, label in enumerate(labels)}
 #model_name = "meta-llama/Llama-3.2-1B"
 #model_name = "Qwen/Qwen2.5-1.5B"
 #model_name = "google/gemma-2-2b"
-model_name = "google/gemma-3-1b-pt"
-max_length = 8192
+model_name = "google/gemma-3-4b-pt"
+max_length = 2048
 #model = AutoModelForSequenceClassification.from_pretrained(
-model = Gemma2ForSequenceClassification.from_pretrained(
+model = Gemma3ForSequenceClassification.from_pretrained(
     model_name,
     num_labels=len(labels),
     output_attentions=False,
@@ -156,9 +156,9 @@ training_args = TrainingArguments(
     output_dir=output_dir,
     num_train_epochs=4,
     per_device_train_batch_size=per_device_train_batch_size,
-    gradient_accumulation_steps=16,
+    gradient_accumulation_steps=4,
     per_device_eval_batch_size=8,
-    evaluation_strategy="epoch",
+    eval_strategy="epoch",
     save_strategy="epoch",
     learning_rate=1e-5,
     disable_tqdm=False,

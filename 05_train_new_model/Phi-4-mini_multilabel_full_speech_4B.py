@@ -1,4 +1,5 @@
-from transformers import AutoConfig, LlamaForSequenceClassification, LlamaTokenizer, EvalPrediction, TrainingArguments, Trainer, AutoTokenizer, Gemma2ForSequenceClassification#, AutoModelForSequenceClassification
+from transformers import AutoConfig, LlamaForSequenceClassification, LlamaTokenizer, EvalPrediction, TrainingArguments, Trainer, AutoTokenizer, AutoModelForSequenceClassification
+from transformers import Phi3ForSequenceClassification
 from datasets import load_dataset
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, roc_auc_score
@@ -14,10 +15,9 @@ import wandb
 #run_name = "politic_EuroBERT-210m_multilabel_bundestag_and_wahlomat"
 #run_name = "politic_EuroBERT-610m_multilabel_bundestag_and_wahlomat"
 #run_name = "politic_EuroBERT-2.1B_multilabel_bundestag_and_wahlomat"
-#run_name = "politic_Llama-3.2-1B_multilabel_bundestag_and_wahlomat"
-#run_name = "politic_Qwen2.5-1.5B_multilabel_bundestag_and_wahlomat"
-run_name = "politic_gemma-3-1b_multilabel_bundestag_and_wahlomat"
-per_device_train_batch_size = 2
+#run_name = "politic_Llama-3.2-3B_multilabel_bundestag_and_wahlomat"
+run_name = "politic_Phi-4-mini-instruct_multilabel_bundestag_and_wahlomat"
+per_device_train_batch_size = 1
 
 # 1) Load dataset
 ds = load_dataset("SinclairSchneider/trainset_political_party_big")
@@ -32,13 +32,11 @@ label2id = {label: idx for idx, label in enumerate(labels)}
 #model_name = "EuroBERT/EuroBERT-2.1B"
 #model_name = "EuroBERT/EuroBERT-610m"
 #model_name = "EuroBERT/EuroBERT-210m"
-#model_name = "meta-llama/Llama-3.2-1B"
-#model_name = "Qwen/Qwen2.5-1.5B"
-#model_name = "google/gemma-2-2b"
-model_name = "google/gemma-3-1b-pt"
+#model_name = "meta-llama/Llama-3.2-3B"
+model_name = "microsoft/Phi-4-mini-instruct"
 max_length = 8192
 #model = AutoModelForSequenceClassification.from_pretrained(
-model = Gemma2ForSequenceClassification.from_pretrained(
+model = Phi3ForSequenceClassification.from_pretrained(
     model_name,
     num_labels=len(labels),
     output_attentions=False,
@@ -153,10 +151,11 @@ metric_name = "f1"
 # 8) Training arguments
 output_dir = "./"+run_name
 training_args = TrainingArguments(
+    #gradient_checkpointing=True,
     output_dir=output_dir,
     num_train_epochs=4,
     per_device_train_batch_size=per_device_train_batch_size,
-    gradient_accumulation_steps=16,
+    gradient_accumulation_steps=32,
     per_device_eval_batch_size=8,
     evaluation_strategy="epoch",
     save_strategy="epoch",
